@@ -4,9 +4,9 @@
 
 It is possible to create, deploy and run Azure Function that run in AKS with KEDA, instead of an App Service Plan.
 
-## Base sample
+## Sample
 
-Create a function:
+### Create a function
 
 ```powershell
 cd src/
