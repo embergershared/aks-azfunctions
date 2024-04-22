@@ -42,4 +42,14 @@ Basic test:
 
 [http://172.175.20.142/api/httpexample?name=test&code=Bt1BgPuoem********FuoxhJxg==](http://172.175.20.142/api/httpexample?name=test&code=<API key>)
 
+### "Azure Service Bus Queue trigger" example
+
+To see if we can run an Azure Function triggered by an Azure Service Bus Queue message, we:
+
+1 - delete the Http trigger function (ensure we are clean focusing on the new trigger)
+
+```powershell
+func new --name AsbqExample --template "ServiceBusQueueTrigger"
+```
+
 ## References
