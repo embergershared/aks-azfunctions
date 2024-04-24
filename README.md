@@ -147,7 +147,7 @@ It ensures we are only focusing on the new function & trigger.
     2. See the `KEDA` scaling the deployment creating replica(s)
     ![Scaled Deployment](./img/scaled-deployment.jpg)
     3. See the pod(s) logs to check they got the message(s)
-    ![Pod Logs](./img/pod-logs.jpg)
+    ![Pod Logs](./img/pods-logs.jpg)
     4. After the messages are processed, the pod(s) are scaled down (back to 0 here)
 
 ### What's next
