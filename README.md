@@ -48,7 +48,9 @@ Basic test:
 
 To see if we can run an Azure Function triggered by an Azure Service Bus Queue message, we:
 
-1. Delete the Http trigger function (to ensure we are clean focusing on the new trigger)
+1. Comment the entire content of the Http trigger function file
+
+It ensures we are only focusing on the new function & trigger.
 
 2. Create a `ServiceBusQueueTrigger` Function
 
@@ -65,13 +67,13 @@ To see if we can run an Azure Function triggered by an Azure Service Bus Queue m
       ILogger log
     )
     {
-    log.LogInformation($"C# ServiceBus queue trigger invoked on queue: {QueueName}");
-    log.LogInformation($"   MessageId:    {message.MessageId}");
-    log.LogInformation($"   Body/Content: {message.Body}");
+      log.LogInformation($"C# ServiceBus queue trigger invoked on queue: {QueueName}");
+      log.LogInformation($"   MessageId:    {message.MessageId}");
+      log.LogInformation($"   Body/Content: {message.Body}");
     }
     ```
 
-4. Create the chosen Connection String **Key** in the file `local.settings.json`, creating a block "ConnectionStrings:"
+4. Create the chosen Connection String **Key** in the file `local.settings.json`, creating a block `"ConnectionStrings:"`
 
     ```json
     {
@@ -86,7 +88,7 @@ To see if we can run an Azure Function triggered by an Azure Service Bus Queue m
     }
     ```
 
-   > Important Note: The Connection String value must give access to the Service Bus Namespace, not the queue!
+   > Important: The Connection String value must give access to the Service Bus Namespace, not the queue!
 
 5. Set the Queue Name in the Function code
 
@@ -116,7 +118,7 @@ To see if we can run an Azure Function triggered by an Azure Service Bus Queue m
     }
     ```
 
-   It will generate the Key and its value automatically in a Kubernetes Secret that the generated kubernetes deployment uses.
+   The `func kubernetes deploy` uses this convention to use the `Values` JSON node to create a Kubernetes Secret with the Key / Value pairs in teh node, exposed in the pod.
 
 2. Create a new `namespace` (for clean separation) and make it default
 
@@ -128,20 +130,31 @@ To see if we can run an Azure Function triggered by an Azure Service Bus Queue m
 
     ![Service Bus Queue trigger deployment output](./img/deploy-asbq-output.jpg)
 
+    > Note: The `func kubernetes deploy` uses the current KubeConfig context in the session to deploy to the AKS cluster + namespace.
+    > If you need to change the context, use `kubectl config use-context <context name>`.
+    > For more information, see [func kubernetes deploy](https://learn.microsoft.com/en-us/azure/azure-functions/functions-core-tools-reference?tabs=v2#func-kubernetes-deploy).
+
 4. Check the Deployment runs
 
     ![Service Bus Queue trigger Kubernetes deployment](./img/asbq-deployment-result.jpg)
 
+    > Note: The deployment has no pods running because there are no messages in the queue.
+
 5. Test it works
 
     1. Create messages in the queue
-    
-    
-    2. See the KEDA scaler creating a replica
-    
-    
+    ![Created Messages](./img/created-messages.jpg)
+    2. See the `KEDA` scaling the deployment creating replica(s)
+    ![Scaled Deployment](./img/scaled-deployment.jpg)
     3. See the pod(s) logs to check they got the message(s)
+    ![Pod Logs](./img/pod-logs.jpg)
 
 ### What's next
 
+If there's a direct link between a Message in the Queue and a Function, using `KEDA` to scale the deployment based on the number of messages in the queue is very efficient.
+
 ## References
+
+[Azure Functions on Kubernetes with KEDA](https://learn.microsoft.com/en-us/azure/azure-functions/functions-kubernetes-keda)
+
+[func kubernetes deploy](https://learn.microsoft.com/en-us/azure/azure-functions/functions-core-tools-reference?tabs=v2#func-kubernetes-deploy)
