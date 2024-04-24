@@ -148,11 +148,13 @@ It ensures we are only focusing on the new function & trigger.
     ![Scaled Deployment](./img/scaled-deployment.jpg)
     3. See the pod(s) logs to check they got the message(s)
     ![Pod Logs](./img/pods-logs.jpg)
-    4. After the messages are processed, the pod(s) are scaled down (back to 0 here)
+    4. After the messages are processed, the pod(s) are scaled down (back to 0 in this sample)
 
 ### What's next
 
-If there's a direct link between a Message in the Queue and a Function, using `KEDA` to scale the deployment based on the number of messages in the queue is very efficient.
+If there's a direct link between a Message in the Queue and a Function, using `KEDA` to scale the Messages processing compute power on an AKS cluster is very efficient.
+
+It allows more complex deployment and Compute resources allocations, as all Kubernetes features become available to the Azure Function Pod(s), like `NodeSelector` to tune compute resources.
 
 ## References
 
