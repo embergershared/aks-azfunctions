@@ -51,8 +51,6 @@ Basic test:
 
 [http://172.111.222.142/api/httpexample?name=test&code="ApiKey"](http://172.111.222.142/api/httpexample?name=test&code="ApiKey")
 
-
-
 ### "Azure Service Bus Queue trigger" example
 
 #### Create and Test locally
