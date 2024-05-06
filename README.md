@@ -49,7 +49,7 @@ The resulting Kubernetes objects created for this trigger are:
 
 Basic test:
 
-[http://172.175.20.142/api/httpexample?name=test&code=Bt1B********Fuoxh](http://172.175.20.142/api/httpexample?name=test&code=<API key>)
+[http://172.*.*.142/api/httpexample?name=test&code=Bt1B********Fuoxh](http://172.175.20.142/api/httpexample?name=test&code=<API key>)
 
 ### "Azure Service Bus Queue trigger" example
 
