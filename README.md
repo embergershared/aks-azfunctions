@@ -2,9 +2,16 @@
 
 ## Overview
 
-It is possible to create, deploy and run Azure Function that run in AKS with KEDA, instead of an App Service Plan.
+Weeks ago, I saw it is possible to create, deploy and run [`Azure Functions`](https://learn.microsoft.com/en-us/azure/azure-functions/) in AKS, instead of an App Service Plan or ACA as described here: [Azure Functions hosting options](https://learn.microsoft.com/en-us/azure/azure-functions/functions-scale#overview-of-plans).
 
-## Sample
+This sample is giving it a shot with 2 different triggers (in `C#` with `In-process model`):
+
+- The classic example of an [`HTTP trigger`](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook-trigger?tabs=python-v2%2Cin-process%2Cnodejs-v4%2Cfunctionsv2&pivots=programming-language-csharp),
+- A more complex [`Service Bus Queue trigger`](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-service-bus-trigger?tabs=python-v2%2Cin-process%2Cnodejs-v4%2Cextensionv5&pivots=programming-language-csharp),
+
+It also look at the resulting Kubernetes objects created by the `func kubernetes deploy` command.
+
+## Samples
 
 ### Create a function
 
@@ -20,16 +27,18 @@ cd AksFunctionApp/
 func new --name HttpExample --template "HTTP trigger"
 dotnet build
 # Set the kubectl context to the target AKS cluster + namespace
-$ACR = "acrtouse"
+$ACR = "<acr name>"
 az acr login -n $ACR
 func kubernetes deploy --name aks-func-app --registry "$ACR.azurecr.io"
 ```
+
+> Important: The function is deployed in the current AKS + namespace context. It is set by the `current-context:` node of the `kubeconfig` file (In windows, located here: `~/.kube/config`).
 
 Result:
 
 ![HTTP trigger deployment output](./img/deploy-http-output.jpg)
 
-The Kubernetes objects created are:
+The resulting Kubernetes objects created for this trigger are:
 
 - 2 `secret`s
 - 1 `serviceaccount`
@@ -40,7 +49,7 @@ The Kubernetes objects created are:
 
 Basic test:
 
-[http://172.175.20.142/api/httpexample?name=test&code=Bt1B********FuoxhJxg==](http://172.175.20.142/api/httpexample?name=test&code=<API key>)
+[http://172.175.20.142/api/httpexample?name=test&code=Bt1B********Fuoxh](http://172.175.20.142/api/httpexample?name=test&code=<API key>)
 
 ### "Azure Service Bus Queue trigger" example
 
@@ -92,7 +101,7 @@ It ensures we are only focusing on the new function & trigger.
 
 5. Set the Queue Name in the Function code
 
-    I used this approach for the sample, but there many other ways:
+    I used this approach for the sample, but there many (better/other) ways:
 
     ```csharp
     private const string QueueName = "<queue name>";
@@ -118,7 +127,7 @@ It ensures we are only focusing on the new function & trigger.
     }
     ```
 
-   The `func kubernetes deploy` uses this convention to use the `Values` JSON node to create a Kubernetes Secret with the Key / Value pairs in teh node, exposed in the pod.
+   The `func kubernetes deploy` uses the `Values` node to create a Kubernetes Secret with the Key / Value pairs in the node, exposed in the pod.
 
 2. Create a new `namespace` (for clean separation) and make it default
 
@@ -158,6 +167,10 @@ It allows more complex deployment and Compute resources allocations, as all Kube
 
 ## References
 
+[Azure Functions documentation](https://learn.microsoft.com/en-us/azure/azure-functions/)
+
 [Azure Functions on Kubernetes with KEDA](https://learn.microsoft.com/en-us/azure/azure-functions/functions-kubernetes-keda)
 
 [func kubernetes deploy](https://learn.microsoft.com/en-us/azure/azure-functions/functions-core-tools-reference?tabs=v2#func-kubernetes-deploy)
+
+[Azure.Functions.Cli/Kubernetes source code](https://github.com/Azure/azure-functions-core-tools/tree/v4.x/src/Azure.Functions.Cli/Kubernetes)

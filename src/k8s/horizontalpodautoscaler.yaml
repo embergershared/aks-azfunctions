@@ -1,0 +1,29 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: keda-operator
+    app.kubernetes.io/name: keda-hpa-aks-func-app-asbq
+    app.kubernetes.io/part-of: aks-func-app-asbq
+    app.kubernetes.io/version: main
+    scaledobject.keda.sh/name: aks-func-app-asbq
+  name: keda-hpa-aks-func-app-asbq
+  namespace: aks-azfunction-asbq
+spec:
+  maxReplicas: 100
+  metrics:
+  - external:
+      metric:
+        name: s0-azure-servicebus-aks-azfunc
+        selector:
+          matchLabels:
+            scaledobject.keda.sh/name: aks-func-app-asbq
+      target:
+        averageValue: "5"
+        type: AverageValue
+    type: External
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: aks-func-app-asbq
